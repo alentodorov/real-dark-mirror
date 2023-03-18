@@ -29,7 +29,7 @@ def load_embeddings_from_disk(file_path):
     with open(file_path, 'rb') as f:
         return pickle.load(f)
 
-def filter_relevant_entries(prompt, diary_entries, entry_embeddings, model, threshold=0.2):
+def filter_relevant_entries(prompt, diary_entries, entry_embeddings, model, threshold=0.3):
     prompt_embedding = get_embeddings([prompt], model)[0]
     similarity_scores = cosine_similarity([prompt_embedding], entry_embeddings)
     relevant_entry_indices = [i for i, score in enumerate(similarity_scores[0]) if score > threshold]
@@ -86,7 +86,7 @@ else:
     save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
 # Prompt
-prompt = "Are you happy?"
+prompt = "Do you like what you do?"
 
 # Filter relevant entries
 relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
