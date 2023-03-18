@@ -97,8 +97,8 @@ filtered_diary = "\n".join(relevant_entries)
 # Keep only the first 4000 characters so that it fits the model
 filtered_diary = filtered_diary[:4000]
 
-print(filtered_diary)
+# print(filtered_diary)
 
 # Generate a response using OpenAI API
-# response = generate_response(prompt, filtered_diary)
-# print(response)
+response = generate_response(prompt, filtered_diary)
+print(response)
