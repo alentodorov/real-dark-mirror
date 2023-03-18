@@ -15,4 +15,4 @@ After, just update the `prompt` var to ask yourself something.
 1. The threshold of the embeddings `filter_relevant_entries`. 
 2. The temperature of the response on `generate_response`.
 
-PS: This is the first time I've ever worked with Python. The entiry of this script is based on asking Chat GPT 4 questions on "How to accomplis X?"
+PS: This is the first time I've ever worked in Python. This app is based on asking Chat GPT 4 questions on "How to accomplis X?"
