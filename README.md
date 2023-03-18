@@ -10,3 +10,5 @@ update name variable in main.py to your name
 update folder_path to your Markdown files 
 ```
 After, just update the `prompt` var to ask yourself something.
+
+PS: This is the first time I've ever worked with Python. The entiry of this script is based on asking Chat GPT 4 questions on "How to accomplis X?"
