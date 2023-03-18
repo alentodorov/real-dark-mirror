@@ -86,14 +86,16 @@ else:
     save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
 # Prompt
-prompt = "Are you happy?"
+prompt = "What do you like to do?"
 
 # Filter relevant entries
 relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
 
 # Combine relevant entries into a single string
 filtered_diary = "\n".join(relevant_entries)
-filtered_diary = filtered_diary[4000:]
+
+# Keep only the first 4000 characters so that it fits the model
+filtered_diary = filtered_diary[:4000]
 
 # print(filtered_diary)
 
