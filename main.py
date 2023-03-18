@@ -86,7 +86,7 @@ else:
     save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
 # Prompt
-prompt = "Do you want to be alone?"
+prompt = "Are you happy?"
 
 # Filter relevant entries
 relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
