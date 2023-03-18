@@ -11,6 +11,19 @@ update folder_path to your Markdown files
 ```
 After, just update the `prompt` var to ask yourself something.
 
+### How it works
+The script performs the following steps:
+
+It reads all markdown files from a specified directory and extracts the text content from them using the markdown_to_text() function.
+
+It then uses the Sentence Transformer library to encode the diary entry texts into dense vector representations using the get_embeddings() function.
+
+It saves the diary entry embeddings to disk using the save_embeddings_to_disk() function.
+
+It uses cosine similarity to filter the most relevant diary entries that match a given prompt using the filter_relevant_entries() function.
+
+It combines the filtered diary entries into a single string and generates a response to the prompt using OpenAI's API via the generate_response() function.
+
 ### Things to calibrate
 1. The threshold of the embeddings `filter_relevant_entries`. 
 2. The temperature of the response on `generate_response`.

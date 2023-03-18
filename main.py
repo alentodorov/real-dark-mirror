@@ -57,7 +57,7 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
                 ),
             },
         ],
-        temperature=2,
+        temperature=0.2,
     )
     return response.choices[0].message.content
 
@@ -86,7 +86,7 @@ else:
     save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
 # Prompt
-prompt = "What is your name?"
+prompt = "Do you want to be alone?"
 
 # Filter relevant entries
 relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
@@ -97,8 +97,8 @@ filtered_diary = "\n".join(relevant_entries)
 # Keep only the first 4000 characters so that it fits the model
 filtered_diary = filtered_diary[:4000]
 
-# print(filtered_diary)
+print(filtered_diary)
 
 # Generate a response using OpenAI API
-response = generate_response(prompt, filtered_diary)
-print(response)
+# response = generate_response(prompt, filtered_diary)
+# print(response)
