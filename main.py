@@ -57,7 +57,7 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
                 ),
             },
         ],
-        temperature=0.2,
+        temperature=2,
     )
     return response.choices[0].message.content
 
@@ -86,7 +86,7 @@ else:
     save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
 # Prompt
-prompt = "What do you like to do?"
+prompt = "What is your name?"
 
 # Filter relevant entries
 relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
