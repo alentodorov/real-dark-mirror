@@ -9,9 +9,9 @@ export OPENAI_API_KEY=your_api_key
 update folder_path to your Markdown files 
 ```
 
-Use it like by adding the question at run time
+Start the app by running:
 ```
-python main.py "Are you happy?"
+python main.py 
 ```
 
 ### How it works
