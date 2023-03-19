@@ -5,6 +5,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import openai
 import pickle
+import sys
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -85,8 +86,13 @@ else:
     entry_embeddings = get_embeddings(diary_entries, model)
     save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
-# Prompt
-prompt = "Do you like what you do?"
+# Get the prompt
+
+if len(sys.argv) > 1:
+    prompt = sys.argv[1]
+else:
+    print("Error: Please provide a prompt as a command line argument.")
+    sys.exit(1)
 
 # Filter relevant entries
 relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
