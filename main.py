@@ -9,7 +9,7 @@ import sys
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 openai.api_key = os.environ.get("OPENAI_API_KEY")
-name = "Your Name"
+name = os.environ.get("USER")
 
 def markdown_to_text(file_path):
     with open(file_path, 'r') as f:

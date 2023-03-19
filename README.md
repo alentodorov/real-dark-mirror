@@ -6,7 +6,6 @@ Install using these steps
 ```
 pip install -r requirements.txt
 export OPENAI_API_KEY=your_api_key
-update name variable in main.py to your name
 update folder_path to your Markdown files 
 python main.py "Are you happy?"
 ```
