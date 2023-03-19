@@ -62,49 +62,37 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
     )
     return response.choices[0].message.content
 
-# Load the Sentence Transformer model
-model = SentenceTransformer("paraphrase-mpnet-base-v2")
+def main():
+    model = SentenceTransformer("paraphrase-mpnet-base-v2")
 
-# Read markdown files from a folder
-folder_path = r'/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary'
-markdown_files = [
-    os.path.join(folder_path, f)
-    for f in os.listdir(folder_path)
-    if f.endswith(".md") and "excalidraw" not in open(os.path.join(folder_path, f)).read()
-]
+    folder_path = r'/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary'
+    markdown_files = [
+        os.path.join(folder_path, f)
+        for f in os.listdir(folder_path)
+        if f.endswith(".md") and "excalidraw" not in open(os.path.join(folder_path, f)).read()
+    ]
 
+    diary_entries = [markdown_to_text(file) for file in markdown_files]
 
-# Combine all entries into a list
-diary_entries = [markdown_to_text(file) for file in markdown_files]
+    embeddings_file_path = "diary_embeddings.pkl"
 
-# Check if embeddings file exists, if not, create and save the embeddings
-embeddings_file_path = "diary_embeddings.pkl"
+    if os.path.exists(embeddings_file_path):
+        entry_embeddings = load_embeddings_from_disk(embeddings_file_path)
+    else:
+        entry_embeddings = get_embeddings(diary_entries, model)
+        save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
-if os.path.exists(embeddings_file_path):
-    entry_embeddings = load_embeddings_from_disk(embeddings_file_path)
-else:
-    entry_embeddings = get_embeddings(diary_entries, model)
-    save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
+    while True:
+        prompt = input("\nEnter a prompt or type 'exit' to quit: ")
+        if prompt.lower() == "exit":
+            break
 
-# Get the prompt
+        relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
+        filtered_diary = "\n".join(relevant_entries)
+        filtered_diary = filtered_diary[:5000]
 
-if len(sys.argv) > 1:
-    prompt = sys.argv[1]
-else:
-    print("Error: Please provide a prompt as a command line argument.")
-    sys.exit(1)
+        response = generate_response(prompt, filtered_diary)
+        print(f"\n{name}: {response}")
 
-# Filter relevant entries
-relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
-
-# Combine relevant entries into a single string
-filtered_diary = "\n".join(relevant_entries)
-
-# Keep only the first 4000 characters so that it fits the model
-filtered_diary = filtered_diary[:4000]
-
-# print(filtered_diary)
-
-# Generate a response using OpenAI API
-response = generate_response(prompt, filtered_diary)
-print(response)
+if __name__ == "__main__":
+    main()
