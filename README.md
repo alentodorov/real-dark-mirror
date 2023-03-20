@@ -28,3 +28,6 @@ The script performs the following steps:
 2. The temperature of the response on `generate_response`. 
 
 PS: This is the first time I've ever worked in Python. This app is based on asking Chat GPT 4 questions on "How to accomplish X?"
+
+### How to test different models
+Switch to the `model-tests` branch to see how other models work for your collection of notes. 
