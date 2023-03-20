@@ -1,6 +1,6 @@
 # This is a weird app
 
-This app uses ChatGPT 3.5 API and your diary to answer questions as if it's you.
+This app uses ChatGPT API and your diary to answer questions as if it's you.
 
 Install using these steps
 ```
