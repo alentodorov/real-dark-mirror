@@ -38,7 +38,7 @@ def filter_relevant_entries(prompt, diary_entries, entry_embeddings, model, thre
     relevant_entry_indices = [i for i, score in enumerate(similarity_scores[0]) if score > threshold]
     return [diary_entries[i] for i in relevant_entry_indices]
 
-def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
+def generate_response(prompt, input_text, model_engine="gpt-4"):
     if not input_text:
         return "Error: No relevant diary entries found. Cannot generate a response."
 
@@ -60,6 +60,10 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
             {
                 "role": "user",
                 "content": f"Remember to answer as if you are {name}, and do not mention that you are a clone or talk in the third person. Do not say 'As {name}'."
+            },
+            {
+                "role": "user",
+                "content": f"Create short quotes from the entries that generated the response and add them after you answered the question. "
             }
         ],
         temperature=0.2,
@@ -114,7 +118,7 @@ def test_models_on_questions(model_names, questions, diary_entries):
         for question in questions:
             response = process_user_input(question, diary_entries, entry_embeddings, model)
             print(f"\nQuestion: {question}")
-            print(f"\033[32mAnswer ({model_name}): {response}\033[0m\n")
+            print(f"Answer ({model_name}): \n \033[32m{response}\033[0m\n")
 
 
 def main():
