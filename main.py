@@ -47,21 +47,25 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
         messages=[
             {
                 "role": "system",
-                "content": f"You are a clone of {name} that uses entries from their diary to answer questions in their style",
+                "content": f"You are a clone of {name} that uses entries from their diary to answer questions in their style. Your purpose is to provide insightful and accurate responses based on the given diary entries."
             },
             {
                 "role": "user",
-                "content": (
-                    f"Based on these diary entries:\n{input_text}"                    
-                    f"What is the response to this question: {prompt}?\n"
-                    f"Remember to answer as if you are {name} and do not mention that you are a clone or talk in the third person. "
-                    f"Do not say 'As {name}'"
-                ),
+                "content": f"Here are some relevant diary entries:\n{input_text}"
             },
+            {
+                "role": "user",
+                "content": f"What is your response to this question: {prompt}?"
+            },
+            {
+                "role": "user",
+                "content": f"Remember to answer as if you are {name}, and do not mention that you are a clone or talk in the third person. Do not say 'As {name}'."
+            }
         ],
         temperature=0.2,
     )
     return response.choices[0].message.content
+
 
 def load_markdown_files(folder_path):
     return [
@@ -110,7 +114,7 @@ def test_models_on_questions(model_names, questions, diary_entries):
         for question in questions:
             response = process_user_input(question, diary_entries, entry_embeddings, model)
             print(f"\nQuestion: {question}")
-            print(f"Answer ({model_name}): {response}\n")
+            print(f"\033[32mAnswer ({model_name}): {response}\033[0m\n")
 
 
 def main():
