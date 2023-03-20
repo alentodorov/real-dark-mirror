@@ -90,7 +90,7 @@ def main_loop(model, diary_entries, entry_embeddings):
             break
 
 def main():
-    model = SentenceTransformer("paraphrase-mpnet-base-v2")
+    model = SentenceTransformer("distilroberta-base-paraphrase-v1")
     folder_path = Path('/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary')
     markdown_files = load_markdown_files(folder_path)
     diary_entries = [markdown_to_text(file) for file in markdown_files]
