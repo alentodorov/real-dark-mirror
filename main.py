@@ -1,11 +1,13 @@
 import os
-import mistune
-from bs4 import BeautifulSoup
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
-import openai
 import pickle
 from pathlib import Path
+
+from bs4 import BeautifulSoup
+import mistune
+import openai
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
+
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -61,39 +63,48 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
     )
     return response.choices[0].message.content
 
-def main():
-    model = SentenceTransformer("paraphrase-mpnet-base-v2")
-    
-    folder_path = Path('/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary')
-    markdown_files = [
+def load_markdown_files(folder_path):
+    return [
         file_path
         for file_path in folder_path.glob("*.md")
-        # remove excalidraw markdown files
         if "excalidraw" not in file_path.read_text()
     ]
 
-    diary_entries = [markdown_to_text(file) for file in markdown_files]
+def process_user_input(prompt, diary_entries, entry_embeddings, model):
+    relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
+    filtered_diary = "\n".join(relevant_entries)
+    filtered_diary = filtered_diary[:5000]
+    response = generate_response(prompt, filtered_diary)
+    return response
 
+def main_loop(model, diary_entries, entry_embeddings):
+    while True:
+        try:
+            prompt = input("\nEnter a prompt or type 'exit' to quit: ")
+            if prompt.lower() == "exit":
+                break
+            response = process_user_input(prompt, diary_entries, entry_embeddings, model)
+            print(f"\n{name}: {response}")
+        except KeyboardInterrupt:
+            print("\nKeyboardInterrupt detected. Exiting the loop...")
+            break
+
+def main():
+    model = SentenceTransformer("paraphrase-mpnet-base-v2")
+    folder_path = Path('/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary')
+    markdown_files = load_markdown_files(folder_path)
+    diary_entries = [markdown_to_text(file) for file in markdown_files]
     embeddings_file_path = "diary_embeddings.pkl"
 
-    if os.path.exists(embeddings_file_path):
-        entry_embeddings = load_embeddings_from_disk(embeddings_file_path)
-    else:
-        print("Building the index. This is an one-time process and might take a few minutes\n")    
+    try:
+        with open(embeddings_file_path, 'rb') as f:
+            entry_embeddings = pickle.load(f)
+    except FileNotFoundError:
+        print("Building the index. This is an one-time process and might take a few minutes\n")
         entry_embeddings = get_embeddings(diary_entries, model)
         save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
-    while True:
-        prompt = input("\nEnter a prompt or type 'exit' to quit: ")
-        if prompt.lower() == "exit":
-            break
-
-        relevant_entries = filter_relevant_entries(prompt, diary_entries, entry_embeddings, model)
-        filtered_diary = "\n".join(relevant_entries)
-        filtered_diary = filtered_diary[:5000]
-
-        response = generate_response(prompt, filtered_diary)
-        print(f"\n{name}: {response}")
+    main_loop(model, diary_entries, entry_embeddings)
 
 if __name__ == "__main__":
     main()
