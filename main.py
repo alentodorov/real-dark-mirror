@@ -5,7 +5,7 @@ from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import openai
 import pickle
-import sys
+from pathlib import Path
 
 os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 openai.api_key = os.environ.get("OPENAI_API_KEY")
@@ -50,9 +50,8 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
             {
                 "role": "user",
                 "content": (
-                    f"Based on these diary entries"
-                    f"{input_text}"
-                    f"what is the response to this question: {prompt}."
+                    f"Based on these diary entries:\n{input_text}"                    
+                    f"What is the response to this question: {prompt}?\n"
                     f"Remember to answer as if you are {name} and do not mention that you are a clone or talk in the third person. "
                     f"Do not say 'As {name}'"
                 ),
@@ -64,12 +63,13 @@ def generate_response(prompt, input_text, model_engine="gpt-3.5-turbo"):
 
 def main():
     model = SentenceTransformer("paraphrase-mpnet-base-v2")
-
-    folder_path = r'/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary'
+    
+    folder_path = Path('/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary')
     markdown_files = [
-        os.path.join(folder_path, f)
-        for f in os.listdir(folder_path)
-        if f.endswith(".md") and "excalidraw" not in open(os.path.join(folder_path, f)).read()
+        file_path
+        for file_path in folder_path.glob("*.md")
+        # remove excalidraw markdown files
+        if "excalidraw" not in file_path.read_text()
     ]
 
     diary_entries = [markdown_to_text(file) for file in markdown_files]
@@ -79,6 +79,7 @@ def main():
     if os.path.exists(embeddings_file_path):
         entry_embeddings = load_embeddings_from_disk(embeddings_file_path)
     else:
+        print("Building the index. This is an one-time process and might take a few minutes\n")    
         entry_embeddings = get_embeddings(diary_entries, model)
         save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
 
