@@ -120,6 +120,14 @@ def main():
         "paraphrase-distilroberta-base-v1",
         "paraphrase-TinyBERT-L6-v2",
         "paraphrase-MiniLM-L12-v2",
+        "paraphrase-xlm-r-multilingual-v1",
+        "stsb-roberta-base",
+        "stsb-bert-base",
+        "nli-roberta-base",
+        "nli-bert-base",
+        "multi-qa-MiniLM-L6-cos-v1",
+        "nq-distilbert-base-v1",
+        "all-mpnet-base-v2"
     ]
 
     questions = [
