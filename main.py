@@ -89,22 +89,49 @@ def main_loop(model, diary_entries, entry_embeddings):
             print("\nKeyboardInterrupt detected. Exiting the loop...")
             break
 
+def test_models_on_questions(model_names, questions, diary_entries):
+    embeddings_cache = {}
+
+    for model_name in model_names:
+        print(f"Testing model: {model_name}")
+        model = SentenceTransformer(model_name)
+
+        # Generate or load embeddings for the current model
+        embeddings_file_path = f"diary_embeddings_{model_name}.pkl"
+        if os.path.exists(embeddings_file_path):
+            entry_embeddings = load_embeddings_from_disk(embeddings_file_path)
+        else:
+            print(f"Building the index for {model_name}. This is a one-time process and might take a few minutes\n")
+            entry_embeddings = get_embeddings(diary_entries, model)
+            save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
+        embeddings_cache[model_name] = entry_embeddings
+
+        # Test the model on the given questions
+        for question in questions:
+            response = process_user_input(question, diary_entries, entry_embeddings, model)
+            print(f"\nQuestion: {question}")
+            print(f"Answer ({model_name}): {response}\n")
+
+
 def main():
-    model = SentenceTransformer("distilroberta-base-paraphrase-v1")
+    model_names = [
+        "paraphrase-mpnet-base-v2",
+        "distilroberta-base-paraphrase-v1",
+        "paraphrase-distilroberta-base-v1",
+        "paraphrase-TinyBERT-L6-v2",
+        "paraphrase-MiniLM-L12-v2",
+    ]
+
+    questions = [
+        "Ask a very personal question to see how the model behaves"
+    ]
+
     folder_path = Path('/Users/alentodorov/Library/Mobile Documents/iCloud~md~obsidian/Documents/diary')
     markdown_files = load_markdown_files(folder_path)
     diary_entries = [markdown_to_text(file) for file in markdown_files]
-    embeddings_file_path = "diary_embeddings.pkl"
 
-    try:
-        with open(embeddings_file_path, 'rb') as f:
-            entry_embeddings = pickle.load(f)
-    except FileNotFoundError:
-        print("Building the index. This is an one-time process and might take a few minutes\n")
-        entry_embeddings = get_embeddings(diary_entries, model)
-        save_embeddings_to_disk(entry_embeddings, embeddings_file_path)
-
-    main_loop(model, diary_entries, entry_embeddings)
+    test_models_on_questions(model_names, questions, diary_entries)
 
 if __name__ == "__main__":
     main()
+
