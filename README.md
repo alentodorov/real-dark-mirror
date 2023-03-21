@@ -25,7 +25,7 @@ The script performs the following steps:
 
 ### How to calibrate
 1. The threshold of the embeddings `filter_relevant_entries` — greater means more entries can be matched
-2. The temperature of the response on `generate_response`. 
+2. The temperature of the response on `generate_response`. `0` means it will only use the diary entries, `1` it will halucinate badly :)
 
 PS: This is the first time I've ever worked in Python. This app is based on asking Chat GPT 4 questions on "How to accomplish X?"
 
